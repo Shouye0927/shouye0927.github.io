@@ -1,0 +1,13 @@
+建立新Post
+.\hugo.exe new content posts/first-post.md
+
+啟動local伺服器
+.\hugo.exe server -D
+
+建置public檔案
+./hugo.exe --minify
+
+Hugo 有一個「虛擬檔案系統疊加（Overlay）」機制：只要你在專案根目錄的 assets/css/extended/ 放一個同名檔案，Hugo 會自動把
+它疊加在主題的對應路徑上，效果跟直接改主題檔案一樣，但不會被主題更新覆蓋掉。
+
+有一些顏色變數放在paperMod底下的core/-var.css資料夾
