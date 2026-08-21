@@ -1,0 +1,32 @@
+name: Deploy Hugo Site
+
+on:
+  push:
+    branches:
+      - source  # 監聽你的 source 分支
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # 自動把 PaperMod 子模組拉下來
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true # PaperMod 需要 extended 版本來處理 SCSS
+
+      - name: Build
+        run: hugo --minify
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: main # 自動把編譯好的 HTML 推送到 main 分支
+          publish_dir: ./public
+          commit_message: ${{ github.event.head_commit.message }}
