@@ -13,3 +13,11 @@ weight = 1
 
 [params.assets]
   disableFingerprinting = true
+  disableHLJS = true
+
+[markup.highlight]
+  codeFences = true
+  guessSyntax = true
+  lineNos = true
+  noClasses = false  # 必須為 false，因為你產生的 CSS 檔是基於類別選擇器 (Class selectors)
+  # style = '...'    # 可以留空或註解掉，因為你已經有了自訂的 CSS 檔案

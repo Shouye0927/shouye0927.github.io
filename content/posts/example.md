@@ -1,14 +1,14 @@
 +++
-title = 'Hugo 技術文章撰寫技巧'
+title = 'Override --code-block-bg when using PaperMod as submodule'
 date = 2026-08-18T15:10:30+08:00
 draft = false
-tags = ['Hugo', '技術文章', '教學']
-summary = '這是一篇展示如何在 Hugo PaperMod 中撰寫優質技術文章的範例。'
+tags = ['Hugo', 'PaperMod']
+summary = '關於PaperMod覆蓋css但卻套用不了css樣式的解決方法ˋ'
 +++
 
-## 1. 程式碼區塊範例
+## 程式碼區塊範例
 
-當你需要展示一段完整的程式邏輯時，Hugo 的 Chroma 系統會自動為你加上高亮與行號（如你的設定）。
+使用darcula hugo chroma 樣式
 
 ```python
 def hello_world():
@@ -22,3 +22,9 @@ def hello_world():
 if __name__ == "__main__":
     hello_world()
 ```
+
+可以參考我的檔案範例建立css檔案
+我自己是只試過B開頭的css，可以成功套用在paperMod的樣式上
+![檔案結構](https://github.com/Shouye0927/ImageBad/raw/main/imgfile_structure.png)
+
+至於為什麼使用c之後的會失敗的原因我猜是hugo在編譯的時候的順序問題，c會在建立code-block這個東西之後才被載入之類的 (我不是很確定)，查AI也沒有一個一定的答案

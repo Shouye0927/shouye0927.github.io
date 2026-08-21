@@ -10,7 +10,7 @@
   --secondary: #5b8bb0;
   --tertiary: #b5d9f4;
   --content: #34495e;
-  --code-block-bg: #e8f4fb;
+  /* --code-block-bg: #e8f4fb; */
   --border: #cce4f6;
   --hover-shadow: rgba(91, 139, 176, 0.25);
   --code-bg: #dbeeff;
@@ -24,7 +24,7 @@
   --secondary: #7ec4e8;
   --tertiary: #2c4a68;
   --content: #c5d8ea;
-  --code-block-bg: #1c2f45;
+  /* --code-block-bg: #1c2f45; */
   --border: #2c4a68;
   --hover-shadow: rgba(126, 196, 232, 0.2);
   --code-bg: #142233;
