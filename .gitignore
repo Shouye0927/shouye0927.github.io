@@ -1,5 +1,14 @@
-hugo.exe
-public/
-resources/
+# Hugo 編譯產物與快取
+/public/
+/resources/_gen/
 .hugo_build.lock
+
+# 本地執行檔
+hugo.exe
+
+# 作業系統暫存檔
+.DS_Store
+Thumbs.db
+
+#我的使用方法
 使用方法.txt

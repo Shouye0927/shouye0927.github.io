@@ -9,12 +9,68 @@
       type="text/css"
       href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css"
     />
-    <!-- 引入深色主題覆蓋樣式 -->
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/swagger-ui-dark-theme/swagger-ui-dark.min.css"
-    />
+    <!-- 確實覆蓋 Swagger UI 背景與文字顏色的深色樣式 -->
+    <style>
+      /* 設定全域深色背景 */
+      html,
+      body {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* 覆蓋 Swagger 主體背景 */
+      .swagger-ui {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+      }
+
+      /* 覆蓋文字、標題顏色 */
+      .swagger-ui .info h1,
+      .swagger-ui .info h2,
+      .swagger-ui .info h3,
+      .swagger-ui .info h4,
+      .swagger-ui .info p,
+      .swagger-ui .info table,
+      .swagger-ui .opblock .opblock-summary-path,
+      .swagger-ui .opblock .opblock-summary-description,
+      .swagger-ui section.models h3 span,
+      .swagger-ui .tab li {
+        color: #e0e0e0 !important;
+      }
+
+      /* 覆蓋區塊外框與背景（如 GET/POST 方法區塊） */
+      .swagger-ui .opblock {
+        background-color: #242424 !important;
+        border-color: #333333 !important;
+      }
+
+      .swagger-ui .opblock .opblock-summary {
+        border-bottom-color: #333333 !important;
+      }
+
+      /* 覆蓋 Model 區塊背景 */
+      .swagger-ui model-box,
+      .swagger-ui .model-container {
+        background-color: #242424 !important;
+      }
+
+      /* 覆蓋表格、參數說明背景 */
+      .swagger-ui table tbody tr td,
+      .swagger-ui table thead tr th {
+        color: #e0e0e0 !important;
+      }
+
+      /* 覆蓋輸入框與下拉選單 */
+      .swagger-ui input,
+      .swagger-ui select,
+      .swagger-ui textarea {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border-color: #444444 !important;
+      }
+    </style>
   </head>
   <body>
     <div id="swagger-ui"></div>

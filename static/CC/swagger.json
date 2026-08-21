@@ -583,7 +583,7 @@
     "/api/events/{eventId}/color": {
       "put": {
         "summary": "更新使用者在特定活動的顯示顏色 (RESTful)",
-        "tags": ["Settings"],
+        "tags": ["Color"],
         "parameters": [
           {
             "in": "path",
@@ -660,64 +660,6 @@
             "description": "伺服器錯誤"
           }
         }
-      }
-    },
-    "/api/users/{userId}/event-colors": {
-      "get": {
-        "summary": "取得該用戶所有活動的顏色設定",
-        "description": "回傳用戶 ID 下所有活動的名稱與已設定的顏色，可用於前端過濾重複顏色。",
-        "tags": ["Color"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "userId",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "該用戶的唯一識別碼 (User ID)"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "成功取得顏色清單",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "eventId": {
-                        "type": "integer",
-                        "example": 101
-                      },
-                      "eventName": {
-                        "type": "string",
-                        "example": "期末專案討論"
-                      },
-                      "color": {
-                        "type": "string",
-                        "example": "#3B82F6"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "無效的使用者 ID"
-          },
-          "500": {
-            "description": "伺服器內部錯誤"
-          }
-        },
-        "x-usage-notes": [
-          "此 API 用於前端「顏色選單」的初始化。",
-          "建議在選取顏色前，先呼叫此 API 取得 usedColors 陣列。",
-          "前端可利用此陣列對調色盤中已存在的顏色進行「禁用」或「加註標示」。"
-        ]
       }
     },
     "/api/events/{eventId}/participants/{userId}/timeslots": {
@@ -1148,6 +1090,348 @@
           },
           "500": {
             "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/event-colors": {
+      "get": {
+        "summary": "取得使用者所有已使用顏色與自訂色",
+        "description": "查詢指定使用者的活動顏色設定，並回傳所有正在使用中的顏色陣列、個人調色盤自訂色清單以及詳細對應資料。",
+        "tags": ["Color"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得使用者顏色與自訂色清單",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "colors": {
+                      "type": "array",
+                      "description": "所有已使用的顏色陣列 (大寫，已去重，供前端做禁用判定)",
+                      "items": {
+                        "type": "string",
+                        "example": "#FF0000"
+                      }
+                    },
+                    "customColors": {
+                      "type": "array",
+                      "description": "個人調色盤的所有自訂顏色陣列 (大寫，已去重)",
+                      "items": {
+                        "type": "string",
+                        "example": "#123456"
+                      }
+                    },
+                    "details": {
+                      "type": "array",
+                      "description": "每個活動對應的顏色詳細資料",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventId": {
+                            "type": "integer",
+                            "description": "活動 ID",
+                            "example": 5
+                          },
+                          "eventName": {
+                            "type": "string",
+                            "description": "活動名稱",
+                            "example": "部門聚餐"
+                          },
+                          "color": {
+                            "type": "string",
+                            "description": "顏色設定",
+                            "example": "#FF0000"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "無效的使用者 ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "無效的使用者 ID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器內部錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "伺服器內部錯誤"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/custom-colors": {
+      "post": {
+        "summary": "新增或儲存使用者自訂色",
+        "description": "接收前端傳入的顏色，轉大寫後使用 upsert 儲存至使用者的自訂色清單，避免重複建立。",
+        "tags": ["Color"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["color"],
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "description": "要儲存的顏色色碼",
+                    "example": "#FF5733"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功儲存自訂色",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "儲存後的自訂色資料",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "自訂色紀錄 ID",
+                          "example": 1
+                        },
+                        "userId": {
+                          "type": "integer",
+                          "description": "使用者 ID",
+                          "example": 123
+                        },
+                        "color": {
+                          "type": "string",
+                          "description": "儲存的顏色 (大寫)",
+                          "example": "#FF5733"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "參數錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "參數錯誤"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器內部錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "伺服器內部錯誤"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/google-calendar-events": {
+      "get": {
+        "summary": "取得指定月份的 Google 日曆事件列表 (Query 參數)",
+        "description": "透過 Query Parameters 傳入 userId、year 與 month，查詢該使用者在指定月份（含跨月份邊界）的 Google 日曆事件。",
+        "tags": ["Google Calendar"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID",
+            "example": 1
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "查詢年份",
+            "example": 2026
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "查詢月份 (1-12)",
+            "example": 8
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得日曆事件列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "資料庫內的事件 ID",
+                        "example": 101
+                      },
+                      "googleEventId": {
+                        "type": "string",
+                        "description": "Google 日曆原生的事件 ID (可存於前端 state)",
+                        "example": "abc123xyz"
+                      },
+                      "summary": {
+                        "type": "string",
+                        "description": "事件標題",
+                        "example": "團隊例會"
+                      },
+                      "description": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "事件描述",
+                        "example": "討論專題進度與分工"
+                      },
+                      "location": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "活動地點",
+                        "example": "線上會議室"
+                      },
+                      "startTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "開始時間 (ISO 8601 格式)",
+                        "example": "2026-08-20T10:00:00.000Z"
+                      },
+                      "endTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "結束時間 (ISO 8601 格式)",
+                        "example": "2026-08-20T11:30:00.000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "缺少必要參數或日期格式無效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "缺少必要參數: userId, year, month"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器內部錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "錯誤詳細訊息..."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
