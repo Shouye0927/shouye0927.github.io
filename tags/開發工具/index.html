@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-tw" dir="auto" data-theme="light">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>開發工具 | 壽也的部落</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="canonical" href="https://shouye0927.github.io/tags/%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://shouye0927.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shouye0927.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shouye0927.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shouye0927.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shouye0927.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="https://shouye0927.github.io/tags/%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/index.xml" title="rss">
+<link rel="alternate" hreflang="zh-tw" href="https://shouye0927.github.io/tags/%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    }
+
+</script><meta property="og:url" content="https://shouye0927.github.io/tags/%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">
+  <meta property="og:site_name" content="壽也的部落">
+  <meta property="og:title" content="開發工具">
+  <meta property="og:locale" content="zh_tw">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="開發工具">
+
+</head>
+<body class="list" id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="https://shouye0927.github.io/" accesskey="h" title="壽也的部落 (Alt + H)">壽也的部落</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header">
+  <h1>
+    開發工具
+  </h1>
+</header>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">喚醒你的伺服器小工具 - CronJob
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在開發過程中，我們經常需要處理一些「重複性」的瑣事，例如定期清理暫存檔、自動備份資料庫，或是喚醒處於休眠狀態的雲端伺服器。這時候，Cron Job 就是開發者最好的朋友。
+什麼是 Cron Job？ 簡單來說，Cron Job 就像是一個設定在系統內部的「自動鬧鐘」。它允許你在特定的時間、日期或固定間隔，自動執行指定的腳本或請求。
+推薦線上工具：Cron-job.org 對於沒有自架伺服器或不想處理複雜 Linux 設定的開發者，cron-job.org 是一個非常強大且免費的線上排程服務。
+它的核心優勢： 介面直覺：無需撰寫複雜的 Cron 語法，透過 Web 介面即可設定。 HTTP 監控：它不僅僅是觸發，還能記錄你的網址是否成功回應（HTTP Status 200）。 通知系統：當你的伺服器回應異常時，它會主動發送郵件通知。 提示：如果你是用來執行敏感任務（如重置資料庫），建議在 API 路由中加入 Token 驗證，防止惡意請求。
+為什麼我們需要它？ 在現代的開發環境中，並非所有任務都需要人工介入。透過自動化排程，你可以：
+節省時間：將繁瑣的維護工作交給系統。 增加可靠性：避免因為人為疏忽而忘記執行備份或更新。 觸發遠端任務：透過網頁端排程服務，即便是靜態網站或 Serverless 架構，也能實現動態觸發。 常見問題 (Q&amp;A) Q: 我在 Windows 上開發，一定要用 Linux 才能設定排程嗎？ 不需要。Windows 內建了「工作排程器 (Task Scheduler)」，透過 GUI 介面同樣能達成自動化任務。如果你習慣 Linux 語法，也可以透過 WSL (Windows Subsystem for Linux) 在 Windows 內運行完整的 Cron 服務。
+延伸閱讀：
+Cron-job.org 官方控制台 如果你有更進階的伺服器需求，也可以嘗試學習 Linux 原生的 crontab -e 指令來進行更底層的系統排程。 </p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-08-21 22:50:17 +0800 CST'>August 21, 2026</span>&nbsp;·&nbsp;<span>1 分鐘</span></footer>
+  <a class="entry-link" aria-label="post link to 喚醒你的伺服器小工具 - CronJob" href="https://shouye0927.github.io/posts/cron-job/"></a>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://shouye0927.github.io/">壽也的部落</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

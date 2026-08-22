@@ -1,0 +1,1442 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "時間排程與協調系統 API",
+    "version": "1.0.0",
+    "description": "基於 Express 與 Prisma 的排程系統後端 API 文件"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "本地開發環境"
+    },
+    {
+      "url": "https://reactwebserver-cc.onrender.com",
+      "description": "雲端正式環境 (例如 Render)"
+    }
+  ],
+  "paths": {
+    "/api/register": {
+      "post": {
+        "summary": "註冊新使用者",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "password"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "testuser"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "註冊成功"
+          },
+          "400": {
+            "description": "帳號已被註冊"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "summary": "使用者登入",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "password"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "testuser"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "登入成功"
+          },
+          "400": {
+            "description": "帳號或密碼錯誤"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/google-calendar/sync": {
+      "post": {
+        "summary": "同步 Google 日曆活動至資料庫",
+        "tags": ["Google Calendar"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "accessToken"],
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "description": "從 Google OAuth 取回的 access token"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "同步成功"
+          },
+          "400": {
+            "description": "缺少必要參數"
+          },
+          "404": {
+            "description": "找不到該使用者"
+          },
+          "500": {
+            "description": "伺服器錯誤或 Google API 錯誤"
+          }
+        }
+      }
+    },
+    "/api/create_event": {
+      "post": {
+        "summary": "建立新排程活動與時間段",
+        "tags": ["Events"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "deadline"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "期末專題討論"
+                  },
+                  "deadline": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2026-06-15T23:59:59.000Z"
+                  },
+                  "organizerId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "timeSlots": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "startTime": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2026-06-10T10:00:00.000Z"
+                        },
+                        "endTime": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2026-06-10T12:00:00.000Z"
+                        }
+                      }
+                    }
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "example": 60
+                  },
+                  "color": {
+                    "type": "string",
+                    "example": "#d69e2e"
+                  },
+                  "requiredItems": {
+                    "type": "string"
+                  },
+                  "link": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "customRemark": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "活動建立成功"
+          },
+          "400": {
+            "description": "標題或 deadline 為空"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/get_google_event/month": {
+      "post": {
+        "summary": "回傳 Google 日曆事件 (整個月 + 緩衝 3 天) / 推薦使用",
+        "tags": ["TimeSlot"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "year", "month"],
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "year": {
+                    "type": "integer",
+                    "example": 2026
+                  },
+                  "month": {
+                    "type": "integer",
+                    "description": "1-12 月",
+                    "example": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功取得日曆事件",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 101
+                          },
+                          "userId": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "startTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2026-05-29T00:00:00.000Z"
+                          },
+                          "endTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2026-05-29T01:00:00.000Z"
+                          },
+                          "title": {
+                            "type": "string",
+                            "example": "會議"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "缺少必要參數或無效日期",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "缺少必要參數: userId, year, month"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_events": {
+      "post": {
+        "summary": "取得使用者參與及主辦的所有活動",
+        "tags": ["Events"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId"],
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功取得活動"
+          },
+          "400": {
+            "description": "缺少參數"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/update_event_color": {
+      "post": {
+        "summary": "(舊版) 更新使用者在特定活動的顯示顏色",
+        "tags": ["Settings"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "eventId", "color"],
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "eventId": {
+                    "type": "integer"
+                  },
+                  "color": {
+                    "type": "string",
+                    "example": "#FF5733"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "設定成功"
+          },
+          "400": {
+            "description": "缺少參數"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/invite": {
+      "post": {
+        "summary": "邀請多位使用者加入活動",
+        "tags": ["Invitations"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["eventId", "inviterId", "inviteeAccounts"],
+                "properties": {
+                  "eventId": {
+                    "type": "integer"
+                  },
+                  "inviterId": {
+                    "type": "integer"
+                  },
+                  "inviteeAccounts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": ["user1", "user2"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "邀請成功送出"
+          },
+          "400": {
+            "description": "缺少參數"
+          },
+          "404": {
+            "description": "找不到指定使用者"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/get_notifications": {
+      "post": {
+        "summary": "取得使用者的邀請通知清單",
+        "tags": ["Invitations"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId"],
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功取得通知清單"
+          },
+          "400": {
+            "description": "缺少 userId"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/respond_invite": {
+      "post": {
+        "summary": "回應活動邀請 (接受或拒絕)",
+        "tags": ["Invitations"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["invitationId", "userId", "response"],
+                "properties": {
+                  "invitationId": {
+                    "type": "integer"
+                  },
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "response": {
+                    "type": "string",
+                    "enum": ["ACCEPTED", "REJECTED"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "已成功回應"
+          },
+          "400": {
+            "description": "缺少參數"
+          },
+          "403": {
+            "description": "無權限或找不到邀請"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "利用 ID 查詢使用者名稱",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得使用者資訊"
+          },
+          "404": {
+            "description": "找不到該使用者"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/events/{id}": {
+      "get": {
+        "summary": "取得單一活動詳細資料與參與狀況 (RESTful)",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "活動 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功回傳活動詳細資訊"
+          },
+          "400": {
+            "description": "無效的 ID 格式"
+          },
+          "404": {
+            "description": "找不到該活動"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/events/{eventId}/color": {
+      "put": {
+        "summary": "更新使用者在特定活動的顯示顏色 (RESTful)",
+        "tags": ["Color"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "活動 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "color"],
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "color": {
+                    "type": "string",
+                    "example": "#10B981"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "顏色設定成功"
+          },
+          "400": {
+            "description": "缺少必要參數"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/get_userid_by_account": {
+      "post": {
+        "summary": "根據帳號名稱查詢 User ID (基本沒在用的api)",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account"],
+                "properties": {
+                  "account": {
+                    "type": "string",
+                    "example": "testuser"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功取得 user ID"
+          },
+          "400": {
+            "description": "查無此 username 或缺少參數"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/events/{eventId}/participants/{userId}/timeslots": {
+      "put": {
+        "summary": "自動儲存/覆蓋使用者的 Priority Time Slots (推薦使用)",
+        "tags": ["TimeSlot"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "活動 ID"
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["slots"],
+                "properties": {
+                  "slots": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["startTime", "endTime", "priority"],
+                      "properties": {
+                        "startTime": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2026-06-01T09:00:00.000Z"
+                        },
+                        "endTime": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2026-06-01T12:00:00.000Z"
+                        },
+                        "priority": {
+                          "type": "string",
+                          "enum": ["HIGH", "MEDIUM", "LOW"],
+                          "example": "HIGH"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "時間儲存成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "時間儲存成功"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "請求參數錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "slots 必須是一個陣列"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "尚未加入此活動",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "您尚未加入此活動，無法編輯可用時間"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_user_timeslots/month": {
+      "post": {
+        "summary": "取得使用者「整個月 + 緩衝 3 天」的 Free Time (推薦使用)",
+        "tags": ["TimeSlot"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "year", "month"],
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "year": {
+                    "type": "integer",
+                    "example": 2026
+                  },
+                  "month": {
+                    "type": "integer",
+                    "example": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功取得使用者月份 TimeSlots",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "timeSlots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 12
+                          },
+                          "eventId": {
+                            "type": "integer",
+                            "example": 3
+                          },
+                          "eventName": {
+                            "type": "string",
+                            "example": "暑期聚會"
+                          },
+                          "startTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2026-05-29T10:00:00.000Z"
+                          },
+                          "endTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2026-05-29T12:00:00.000Z"
+                          },
+                          "priority": {
+                            "type": "string",
+                            "enum": ["HIGH", "MEDIUM", "LOW"],
+                            "example": "HIGH"
+                          },
+                          "color": {
+                            "type": "string",
+                            "example": "#d69e2e"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "缺少必要參數或無效日期",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "缺少必要參數"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/events/{eventId}/organizer-timeslots": {
+      "get": {
+        "summary": "取得特定活動的主辦者候選時間段 (Organizer Time Slots)",
+        "description": "根據活動 ID (eventId)，回傳該活動主辦者當初設定的所有候選時間段。",
+        "tags": ["OrganizerTimeSlot"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "活動 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得主辦者提供的候選時間",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "成功取得主辦者提供的候選時間"
+                    },
+                    "organizerTimeSlots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "description": "時間段 ID",
+                            "example": 1
+                          },
+                          "eventId": {
+                            "type": "integer",
+                            "description": "所屬的活動 ID",
+                            "example": 5
+                          },
+                          "startTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "時間段開始時間",
+                            "example": "2026-08-20T10:00:00.000Z"
+                          },
+                          "endTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "時間段結束時間",
+                            "example": "2026-08-20T12:00:00.000Z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "無效的活動 ID 格式",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "無效的活動 ID 格式"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/events/organizer-timeslots": {
+      "get": {
+        "summary": "取得使用者參與的所有活動的主辦者時間段 (攤平格式)",
+        "description": "抓取使用者「參與」或「主辦」的所有活動，並將其 organizerTimeSlots 攤平成一維陣列。內部包含活動名稱與使用者自訂顏色，方便前端日曆套件直接渲染。",
+        "tags": ["OrganizerTimeSlot"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得該使用者所有相關活動的主辦者時間段",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "成功取得該使用者所有相關活動的主辦者時間段"
+                    },
+                    "timeSlots": {
+                      "type": "array",
+                      "description": "攤平後的時間段陣列，包含辨識活動用的輔助欄位",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "description": "時間段 ID",
+                            "example": 1
+                          },
+                          "eventId": {
+                            "type": "integer",
+                            "description": "所屬的活動 ID",
+                            "example": 5
+                          },
+                          "eventName": {
+                            "type": "string",
+                            "description": "活動名稱",
+                            "example": "部門聚餐"
+                          },
+                          "color": {
+                            "type": "string",
+                            "description": "該使用者為此活動設定的顏色(或預設顏色)",
+                            "example": "#ef4444"
+                          },
+                          "startTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "時間段開始時間",
+                            "example": "2026-08-20T10:00:00.000Z"
+                          },
+                          "endTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "時間段結束時間",
+                            "example": "2026-08-20T12:00:00.000Z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "無效的使用者 ID 格式",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "無效的使用者 ID 格式"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/event-colors": {
+      "get": {
+        "summary": "取得使用者所有已使用顏色與自訂色",
+        "description": "查詢指定使用者的活動顏色設定，並回傳所有正在使用中的顏色陣列、個人調色盤自訂色清單以及詳細對應資料。",
+        "tags": ["Color"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得使用者顏色與自訂色清單",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "colors": {
+                      "type": "array",
+                      "description": "所有已使用的顏色陣列 (大寫，已去重，供前端做禁用判定)",
+                      "items": {
+                        "type": "string",
+                        "example": "#FF0000"
+                      }
+                    },
+                    "customColors": {
+                      "type": "array",
+                      "description": "個人調色盤的所有自訂顏色陣列 (大寫，已去重)",
+                      "items": {
+                        "type": "string",
+                        "example": "#123456"
+                      }
+                    },
+                    "details": {
+                      "type": "array",
+                      "description": "每個活動對應的顏色詳細資料",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventId": {
+                            "type": "integer",
+                            "description": "活動 ID",
+                            "example": 5
+                          },
+                          "eventName": {
+                            "type": "string",
+                            "description": "活動名稱",
+                            "example": "部門聚餐"
+                          },
+                          "color": {
+                            "type": "string",
+                            "description": "顏色設定",
+                            "example": "#FF0000"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "無效的使用者 ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "無效的使用者 ID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器內部錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "伺服器內部錯誤"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/custom-colors": {
+      "post": {
+        "summary": "新增或儲存使用者自訂色",
+        "description": "接收前端傳入的顏色，轉大寫後使用 upsert 儲存至使用者的自訂色清單，避免重複建立。",
+        "tags": ["Color"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["color"],
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "description": "要儲存的顏色色碼",
+                    "example": "#FF5733"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功儲存自訂色",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "儲存後的自訂色資料",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "自訂色紀錄 ID",
+                          "example": 1
+                        },
+                        "userId": {
+                          "type": "integer",
+                          "description": "使用者 ID",
+                          "example": 123
+                        },
+                        "color": {
+                          "type": "string",
+                          "description": "儲存的顏色 (大寫)",
+                          "example": "#FF5733"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "參數錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "參數錯誤"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器內部錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "伺服器內部錯誤"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/google-calendar-events": {
+      "get": {
+        "summary": "取得指定月份的 Google 日曆事件列表 (Query 參數)",
+        "description": "透過 Query Parameters 傳入 userId、year 與 month，查詢該使用者在指定月份（含跨月份邊界）的 Google 日曆事件。",
+        "tags": ["Google Calendar"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID",
+            "example": 1
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "查詢年份",
+            "example": 2026
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "查詢月份 (1-12)",
+            "example": 8
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得日曆事件列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "資料庫內的事件 ID",
+                        "example": 101
+                      },
+                      "googleEventId": {
+                        "type": "string",
+                        "description": "Google 日曆原生的事件 ID (可存於前端 state)",
+                        "example": "abc123xyz"
+                      },
+                      "summary": {
+                        "type": "string",
+                        "description": "事件標題",
+                        "example": "團隊例會"
+                      },
+                      "description": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "事件描述",
+                        "example": "討論專題進度與分工"
+                      },
+                      "location": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "活動地點",
+                        "example": "線上會議室"
+                      },
+                      "startTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "開始時間 (ISO 8601 格式)",
+                        "example": "2026-08-20T10:00:00.000Z"
+                      },
+                      "endTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "結束時間 (ISO 8601 格式)",
+                        "example": "2026-08-20T11:30:00.000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "缺少必要參數或日期格式無效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "缺少必要參數: userId, year, month"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器內部錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "錯誤詳細訊息..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": []
+}

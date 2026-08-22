@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>開發工具 on 壽也的部落</title>
+    <link>https://shouye0927.github.io/tags/%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/</link>
+    <description>Recent content in 開發工具 on 壽也的部落</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <lastBuildDate>Fri, 21 Aug 2026 22:50:17 +0800</lastBuildDate>
+    <atom:link href="https://shouye0927.github.io/tags/%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>喚醒你的伺服器小工具 - CronJob</title>
+      <link>https://shouye0927.github.io/posts/cron-job/</link>
+      <pubDate>Fri, 21 Aug 2026 22:50:17 +0800</pubDate>
+      <guid>https://shouye0927.github.io/posts/cron-job/</guid>
+      <description>&lt;p&gt;在開發過程中，我們經常需要處理一些「重複性」的瑣事，例如定期清理暫存檔、自動備份資料庫，或是喚醒處於休眠狀態的雲端伺服器。這時候，&lt;strong&gt;Cron Job&lt;/strong&gt; 就是開發者最好的朋友。&lt;/p&gt;
+&lt;h3 id=&#34;什麼是-cron-job&#34;&gt;什麼是 Cron Job？&lt;/h3&gt;
+&lt;p&gt;簡單來說，Cron Job 就像是一個設定在系統內部的「自動鬧鐘」。它允許你在特定的時間、日期或固定間隔，自動執行指定的腳本或請求。&lt;/p&gt;
+&lt;h3 id=&#34;推薦線上工具cron-joborg&#34;&gt;推薦線上工具：Cron-job.org&lt;/h3&gt;
+&lt;p&gt;對於沒有自架伺服器或不想處理複雜 Linux 設定的開發者，&lt;strong&gt;&lt;a href=&#34;https://console.cron-job.org/&#34;&gt;cron-job.org&lt;/a&gt;&lt;/strong&gt; 是一個非常強大且免費的線上排程服務。&lt;/p&gt;
+&lt;h3 id=&#34;它的核心優勢&#34;&gt;它的核心優勢：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;介面直覺&lt;/strong&gt;：無需撰寫複雜的 Cron 語法，透過 Web 介面即可設定。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;HTTP 監控&lt;/strong&gt;：它不僅僅是觸發，還能記錄你的網址是否成功回應（HTTP Status 200）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;通知系統&lt;/strong&gt;：當你的伺服器回應異常時，它會主動發送郵件通知。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;提示&lt;/strong&gt;：如果你是用來執行敏感任務（如重置資料庫），建議在 API 路由中加入 &lt;code&gt;Token&lt;/code&gt; 驗證，防止惡意請求。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;為什麼我們需要它&#34;&gt;為什麼我們需要它？&lt;/h3&gt;
+&lt;p&gt;在現代的開發環境中，並非所有任務都需要人工介入。透過自動化排程，你可以：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;節省時間&lt;/strong&gt;：將繁瑣的維護工作交給系統。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;增加可靠性&lt;/strong&gt;：避免因為人為疏忽而忘記執行備份或更新。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;觸發遠端任務&lt;/strong&gt;：透過網頁端排程服務，即便是靜態網站或 Serverless 架構，也能實現動態觸發。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;常見問題-qa&#34;&gt;常見問題 (Q&amp;amp;A)&lt;/h3&gt;
+&lt;h4 id=&#34;q-我在-windows-上開發一定要用-linux-才能設定排程嗎&#34;&gt;Q: 我在 Windows 上開發，一定要用 Linux 才能設定排程嗎？&lt;/h4&gt;
+&lt;p&gt;不需要。Windows 內建了「工作排程器 (Task Scheduler)」，透過 GUI 介面同樣能達成自動化任務。如果你習慣 Linux 語法，也可以透過 &lt;strong&gt;WSL (Windows Subsystem for Linux)&lt;/strong&gt; 在 Windows 內運行完整的 Cron 服務。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;延伸閱讀&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://console.cron-job.org/&#34;&gt;Cron-job.org 官方控制台&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;如果你有更進階的伺服器需求，也可以嘗試學習 Linux 原生的 &lt;code&gt;crontab -e&lt;/code&gt; 指令來進行更底層的系統排程。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;</description>
+    </item>
+  </channel>
+</rss>

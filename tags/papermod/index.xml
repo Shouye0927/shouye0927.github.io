@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>PaperMod on 壽也的部落</title>
+    <link>https://shouye0927.github.io/tags/papermod/</link>
+    <description>Recent content in PaperMod on 壽也的部落</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <lastBuildDate>Tue, 18 Aug 2026 15:10:30 +0800</lastBuildDate>
+    <atom:link href="https://shouye0927.github.io/tags/papermod/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Override --code-block-bg when using PaperMod as submodule</title>
+      <link>https://shouye0927.github.io/posts/example/</link>
+      <pubDate>Tue, 18 Aug 2026 15:10:30 +0800</pubDate>
+      <guid>https://shouye0927.github.io/posts/example/</guid>
+      <description>關於PaperMod覆蓋css但卻套用不了css樣式的解決方法ˋ</description>
+    </item>
+  </channel>
+</rss>
