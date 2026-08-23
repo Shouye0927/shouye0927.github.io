@@ -481,6 +481,7 @@
     "/api/respond_invite": {
       "post": {
         "summary": "回應活動邀請 (接受或拒絕)",
+        "description": "參與者接收並回應活動邀請。如果選擇接受 (ACCEPTED)，系統會自動建立參與者紀錄並設定行事曆顏色。",
         "tags": ["Invitations"],
         "requestBody": {
           "required": true,
@@ -491,14 +492,25 @@
                 "required": ["invitationId", "userId", "response"],
                 "properties": {
                   "invitationId": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "邀請函 ID",
+                    "example": 12
                   },
                   "userId": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "使用者 ID (受邀者)",
+                    "example": 5
                   },
                   "response": {
                     "type": "string",
-                    "enum": ["ACCEPTED", "REJECTED"]
+                    "enum": ["ACCEPTED", "REJECTED"],
+                    "description": "回應狀態 (接受或拒絕)",
+                    "example": "ACCEPTED"
+                  },
+                  "color": {
+                    "type": "string",
+                    "description": "自訂活動顏色 (當 response 為 ACCEPTED 時建議提供)",
+                    "example": "#3498db"
                   }
                 }
               }
@@ -507,16 +519,72 @@
         },
         "responses": {
           "200": {
-            "description": "已成功回應"
+            "description": "已成功回應邀請",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "已接受邀請"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "缺少參數"
+            "description": "缺少必要參數",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "缺少參數"
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
-            "description": "無權限或找不到邀請"
+            "description": "無權限或找不到該邀請",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "無權限或找不到該邀請"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "伺服器錯誤"
+            "description": "伺服器內部錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Database connection failed..."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1432,6 +1500,99 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/events/{eventId}/participants-timeslots": {
+      "get": {
+        "summary": "取得特定活動的所有參與者可用時間",
+        "tags": ["Coordinate Scene"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "活動的 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得所有參與者的可用時間清單",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "成功取得所有參與者的可用時間"
+                    },
+                    "eventId": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "eventName": {
+                      "type": "string",
+                      "example": "團隊週會"
+                    },
+                    "participantsTimeSlots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "userId": {
+                            "type": "integer"
+                          },
+                          "userName": {
+                            "type": "string"
+                          },
+                          "respondedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "timeSlots": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "startTime": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "endTime": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "priority": {
+                                  "type": "string",
+                                  "enum": ["LOW", "MEDIUM", "HIGH"]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "無效的活動 ID 格式"
+          },
+          "404": {
+            "description": "找不到該活動"
+          },
+          "500": {
+            "description": "伺服器錯誤"
           }
         }
       }
