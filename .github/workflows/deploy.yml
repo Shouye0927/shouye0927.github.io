@@ -21,7 +21,7 @@ jobs:
           extended: true # PaperMod 需要 extended 版本來處理 SCSS
 
       - name: Build
-        run: hugo --minify -v
+        run: hugo --minify --cleanDestinationDir
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
