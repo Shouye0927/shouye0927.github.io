@@ -3,7 +3,7 @@ name: Deploy Hugo Site
 on:
   push:
     branches:
-      - source  # 監聽你的 source 分支
+      - source # 監聽你的 source 分支
 
 jobs:
   build-and-deploy:
@@ -17,11 +17,11 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: 'latest'
+          hugo-version: "latest"
           extended: true # PaperMod 需要 extended 版本來處理 SCSS
 
       - name: Build
-        run: hugo --minify
+        run: hugo --minify -v
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
