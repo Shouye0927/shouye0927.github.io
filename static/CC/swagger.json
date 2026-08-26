@@ -1064,6 +1064,89 @@
             "description": "伺服器錯誤"
           }
         }
+      },
+      "put": {
+        "summary": "更新特定活動的主辦人候選時間段",
+        "tags": ["Coordinate Scene"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "活動的 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "slots"],
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "description": "操作的使用者 ID（必須為主辦人）",
+                    "example": 1
+                  },
+                  "slots": {
+                    "type": "array",
+                    "description": "要設定的主辦人候選時間清單（會覆寫舊的資料）",
+                    "items": {
+                      "type": "object",
+                      "required": ["startTime", "endTime"],
+                      "properties": {
+                        "startTime": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2026-06-01T09:00:00.000Z"
+                        },
+                        "endTime": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2026-06-01T10:00:00.000Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "主辦人候選時間更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "主辦人候選時間更新成功"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "缺少必要參數或 slots 格式錯誤"
+          },
+          "403": {
+            "description": "只有活動主辦人可以修改候選時間段"
+          },
+          "404": {
+            "description": "找不到該活動"
+          },
+          "500": {
+            "description": "伺服器錯誤"
+          }
+        }
       }
     },
     "/api/users/{userId}/events/organizer-timeslots": {
