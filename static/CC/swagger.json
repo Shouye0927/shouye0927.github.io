@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "title": "時間排程與協調系統 API",
-    "version": "1.0.0",
-    "description": "基於 Express 與 Prisma 的排程系統後端 API 文件"
+    "version": "1.0.1",
+    "description": "最後更新日期 2026年08月31日 16點13分"
   },
   "servers": [
     {
@@ -591,7 +591,7 @@
     },
     "/api/users/{id}": {
       "get": {
-        "summary": "利用 ID 查詢使用者名稱",
+        "summary": "利用 ID 查詢使用者名稱、頭像與稱號",
         "tags": ["Users"],
         "parameters": [
           {
@@ -606,13 +606,69 @@
         ],
         "responses": {
           "200": {
-            "description": "成功取得使用者資訊"
+            "description": "成功取得使用者資訊",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_title": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "使用者稱號",
+                      "example": "初級冒險者"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "使用者名稱",
+                      "example": "John Doe"
+                    },
+                    "userPicUrl": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "使用者頭像網址",
+                      "example": "https://example.com/avatar.jpg"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "找不到該使用者"
+            "description": "找不到該使用者",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "找不到使用者"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "伺服器錯誤"
+            "description": "伺服器錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message details"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1801,6 +1857,550 @@
                     "error": {
                       "type": "string",
                       "example": "Database connection error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "更新活動基本資料",
+        "description": "僅活動主辦人有權限編輯活動基本資料（名稱、時長、截止時間、備註相關欄位）。採用部分更新（Partial Update），未提供的欄位將保持原樣。",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "活動 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId"],
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "description": "發起更新的使用者 ID（必須為活動主辦人）",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "活動名稱",
+                    "example": "團隊期末專案討論會"
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "description": "活動預估時長（分鐘）",
+                    "example": 60
+                  },
+                  "deadline": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "投票/填寫截止時間 (ISO 8601 格式)",
+                    "example": "2026-09-10T23:59:59.000Z"
+                  },
+                  "requiredItems": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "必備物品",
+                    "example": "筆記型電腦、充電器"
+                  },
+                  "link": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "線上會議或相關連結",
+                    "example": "https://meet.google.com/abc-defg-hij"
+                  },
+                  "location": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "活動地點",
+                    "example": "工程一館 301 教室"
+                  },
+                  "customRemark": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "自訂備註",
+                    "example": "請大家準時出席並預先閱讀提案文件"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "活動內容更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "活動內容更新成功"
+                    },
+                    "event": {
+                      "type": "object",
+                      "description": "更新後的活動資料物件"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "請求參數錯誤（ID 格式無效或缺少 userId）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "缺少必要參數: userId"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "權限不足（非活動主辦人）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "只有活動主辦人可以編輯此活動"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "找不到該活動",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "找不到該活動"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤，更新活動失敗"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message details"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}/avatar": {
+      "put": {
+        "summary": "上傳並更新使用者大頭貼",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["avatar"],
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "大頭貼圖片檔案"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "大頭貼更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "大頭貼更新成功"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "userPicUrl": {
+                          "type": "string",
+                          "example": "https://example.com/storage/v1/object/public/avatar/user_1_1714500000.png"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "請求參數錯誤（無效的 ID 格式或未提供圖片檔案）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "未提供圖片檔案"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "找不到該使用者",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "找不到該使用者"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤或圖片儲存失敗",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "圖片儲存失敗"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Bucket not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}/title": {
+      "put": {
+        "summary": "修改使用者稱號",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "使用者 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "新的使用者稱號（不能為空字串）",
+                    "example": "資深冒險家"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "稱號更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "稱號更新成功"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "user_title": {
+                          "type": "string",
+                          "example": "資深冒險家"
+                        },
+                        "userPicUrl": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "https://example.com/avatar.jpg"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "請求參數錯誤（無效的 ID 格式或稱號為空）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "稱號不能為空"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "找不到該使用者",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "找不到該使用者"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Database connection error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/events/{eventId}/participants/{participantUserId}": {
+      "delete": {
+        "summary": "移除單一活動參與者",
+        "description": "僅活動主辦人有權限將特定參與者自活動中移除。移除時會連帶清除該參與者的可用時段、個人活動設定、參與紀錄與邀請紀錄。",
+        "tags": ["OrganizerTimeSlot"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "活動 ID"
+          },
+          {
+            "in": "path",
+            "name": "participantUserId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "欲移除的參與者使用者 ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["requestorId"],
+                "properties": {
+                  "requestorId": {
+                    "type": "integer",
+                    "description": "發起操作的使用者 ID（必須為活動主辦人 ID）",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功將該使用者移出活動",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "已成功將該使用者移出活動"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "請求參數錯誤（ID 格式無效、缺少 requestorId 或嘗試移除主辦人自己）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "不能移除活動主辦人本身"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "權限不足（非主辦人發起請求）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "只有活動主辦人可以移除參與者"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "找不到該活動或該使用者非此活動參與者",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "該使用者並非此活動的參與者"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器錯誤",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "伺服器錯誤，移除參與者失敗"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error message details"
                     }
                   }
                 }
